@@ -100,3 +100,6 @@ print(produto['image'])
 
 # comando para ativar ambiente virtual no windows
 # .\venv\Scripts\activate
+
+# Comando para o erro de política de excução de scripts no windows
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
