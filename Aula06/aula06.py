@@ -94,3 +94,9 @@ print('O produto que você escolheu foi: ')
 
 produto = resposta.json()
 print(produto['image'])
+
+# comando para criar ambiente virtual
+# python -m venv venv
+
+# comando para ativar ambiente virtual no windows
+# .\venv\Scripts\activate
