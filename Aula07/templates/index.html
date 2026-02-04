@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - Assistente Virtual{% endblock %}
+
+{% block styles %}
+<style>
+    #chat-window {
+        height: 400px;
+        overflow-y: auto;
+        background-color: #fcfcfc;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 15px;
+    }
+    .message {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        border-radius: 15px;
+        max-width: 80%;
+    }
+    .user-message {
+        background-color: #0d6efd;
+        color: white;
+        margin-left: auto;
+        border-bottom-right-radius: 2px;
+    }
+    .ai-message {
+        background-color: #e9ecef;
+        color: #333;
+        margin-right: auto;
+        border-bottom-left-radius: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-chat-dots"></i> Assistente Virtual</h5>
+            </div>
+            
+            <div class="card-body">
+                <div id="chat-window" class="mb-3 d-flex flex-column">
+                    <div class="message ai-message">
+                        Olá! Como posso te ajudar hoje?
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="user-input" class="form-control" placeholder="Digite sua mensagem..." aria-label="Mensagem do usuário">
+                    <button class="btn btn-primary" type="button" id="send-btn">
+                        Enviar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const chatWindow = document.getElementById('chat-window');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    // Função para adicionar mensagem na tela
+    function addMessage(text, isUser) {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message');
+        msgDiv.classList.add(isUser ? 'user-message' : 'ai-message');
+        msgDiv.innerText = text;
+        chatWindow.appendChild(msgDiv);
+        
+        // Scroll automático para o final
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Limpa o input e mostra a mensagem do usuário
+        userInput.value = '';
+        addMessage(message, true);
+
+        try {
+            const response = await fetch('/enviar_mensagem', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mensagem: message })
+            });
+
+            const data = await response.json();
+            
+            if (data.resposta) {
+                addMessage(data.resposta, false);
+            } else {
+                addMessage("Erro: Não foi possível obter resposta.", false);
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            addMessage("Erro de conexão com o servidor.", false);
+        }
+    }
+
+    // Eventos de clique e tecla Enter
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+{% endblock %}
