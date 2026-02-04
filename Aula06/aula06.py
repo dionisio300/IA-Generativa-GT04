@@ -103,3 +103,4 @@ print(produto['image'])
 
 # Comando para o erro de política de excução de scripts no windows
 # Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+# pip install -r .\requirements.txt
